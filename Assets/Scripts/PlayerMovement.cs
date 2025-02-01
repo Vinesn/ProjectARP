@@ -18,8 +18,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Debug.Log(moveInput);
-
         if (controller.currentState != PlayerController.playerState.Attacking)
         {
             controller.currentState = PlayerController.playerState.Running;
@@ -30,7 +28,8 @@ public class PlayerMovement : MonoBehaviour
                 attPos.position = moveInput.normalized + new Vector2(transform.position.x, transform.position.y);
             }
 
-        } else
+        }
+        else
         {
             rb.linearVelocity = Vector2.zero;
         }
