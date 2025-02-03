@@ -9,7 +9,7 @@ public class EnemyAI : MonoBehaviour
     [Header("Pathfinding")]
     public Transform target;
     public LayerMask playerLayer;
-    public float activeDistance = 3f;
+    public float activeDistance;
     public float pathUpdateSeconds = 0.5f;
     Collider2D closestTarget;
 
@@ -17,7 +17,7 @@ public class EnemyAI : MonoBehaviour
     public float nextWaypointDistance = 3f;
     float moveSpeed;
 
-    public Transform enemyGFX;
+    public SpriteRenderer enemyGFX;
     Path path;
     int currentWaypoint = 0;
     Seeker seeker;
@@ -33,6 +33,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
+        activeDistance = controller.sightRadius;
         InvokeRepeating("UpdatePath", 0f, pathUpdateSeconds);
     }
 
@@ -45,18 +46,15 @@ public class EnemyAI : MonoBehaviour
     {
         if (TargetInDistance())
         {
-            controller.ChangeEnemyState(EnemyController.enemyState.Patrol);
             PathFollow();
+        } else
+        {
+            controller.ChangeEnemyState(EnemyController.enemyState.Idle);
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
         }
 
-        if (rb.linearVelocity.x >= 0.01f)
-        {
-            enemyGFX.localScale = new Vector2(1f, 1f);
-        }
-        else if (rb.linearVelocity.x <= 0.01f)
-        {
-            enemyGFX.localScale = new Vector2(-1f, 1f);
-        } 
+
     }
 
     void UpdatePath()
@@ -69,6 +67,7 @@ public class EnemyAI : MonoBehaviour
 
     void PathFollow()
     {
+        //Checki
         if (path == null)
         {
             return;
@@ -78,6 +77,13 @@ public class EnemyAI : MonoBehaviour
         {
             return;
         }
+        //Animation
+        if (controller.currentEnemyState != EnemyController.enemyState.Chase)
+        {
+            controller.ChangeEnemyState(EnemyController.enemyState.Chase);
+        }
+
+        //Move
         Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
         Vector2 force = direction * moveSpeed * Time.fixedDeltaTime;
 
@@ -87,6 +93,15 @@ public class EnemyAI : MonoBehaviour
         if (distance < nextWaypointDistance)
         {
             currentWaypoint++;
+        }
+        //GFX Flip
+        if (direction.x >= 0.05f)
+        {
+            enemyGFX.flipX = false;
+        }
+        else if (direction.x <= 0.05f)
+        {
+            enemyGFX.flipX = true;
         }
     }
 

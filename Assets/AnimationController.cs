@@ -32,5 +32,9 @@ public class AnimationController : MonoBehaviour
         {
             animator.SetTrigger("isHurt");
         }
+        if (enemyController.currentEnemyState == EnemyController.enemyState.Chase)
+        {
+            animator.SetTrigger("isChase");
+        }
     }
 }
