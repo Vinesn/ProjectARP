@@ -15,26 +15,26 @@ public class AnimationController : MonoBehaviour
 
     private void Update()
     {
-        if (enemyController.currentEnemyState == EnemyController.enemyState.Idle)
+        switch (enemyController.currentEnemyState)
         {
-            animator.SetTrigger("isIdle");
-        }
-
-        if (enemyController.currentEnemyState == EnemyController.enemyState.Patrol)
-        {
-            animator.SetTrigger("isMoving");
-        }
-        if (enemyController.currentEnemyState == EnemyController.enemyState.Attack)
-        {
-            animator.SetTrigger("isAttacking");
-        }
-        if (enemyController.currentEnemyState == EnemyController.enemyState.Hurt)
-        {
-            animator.SetTrigger("isHurt");
-        }
-        if (enemyController.currentEnemyState == EnemyController.enemyState.Chase)
-        {
-            animator.SetTrigger("isChase");
+            case EnemyController.enemyState.Idle:
+                animator.SetTrigger("isIdle");
+                break;
+            case EnemyController.enemyState.Patrol:
+                animator.SetTrigger("isMoving");
+                break;
+            case EnemyController.enemyState.Attack:
+                animator.SetTrigger("isAttacking");
+                break;
+            case EnemyController.enemyState.Hurt:
+                animator.SetTrigger("isHurt");
+                break;
+            case EnemyController.enemyState.Chase:
+                animator.SetTrigger("isChase");
+                break;
+            default:
+                animator.SetTrigger("isIdle");
+                break;
         }
     }
 }

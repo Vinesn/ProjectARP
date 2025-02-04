@@ -156,6 +156,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1645783502066772611, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
+      propertyPath: sightRadius
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 3341882558774575174, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.8
@@ -190,7 +194,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8731671359188871865, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.87
+      value: -5.62
       objectReference: {fileID: 0}
     - target: {fileID: 8731671359188871865, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_LocalPosition.y
@@ -308,7 +312,7 @@ MonoBehaviour:
     m_Bits: 128
   activeDistance: 5
   pathUpdateSeconds: 0.5
-  nextWaypointDistance: 3
+  nextWaypointDistance: 0.1
   enemyGFX: {fileID: 4373110682985516658}
 --- !u!114 &2777072798398189705
 MonoBehaviour:

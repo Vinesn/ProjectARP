@@ -59,10 +59,4 @@ public class EnemyController : MonoBehaviour
     {
         currentEnemyState = newState;
     }
-
-    //public Vector2 GetEnemyDirection()
-    //{
-    //    Vector2 enemyDirection = enemyAI.direction;
-    //    return enemyDirection;
-    //}
 }

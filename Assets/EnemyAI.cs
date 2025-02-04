@@ -5,12 +5,11 @@ using Pathfinding;
 public class EnemyAI : MonoBehaviour
 {
     //Zrobiæ Mechanike Patrolu (WaitforNextPatrol, RandomPatrolPoint), Ogarn¹æ State Machine
-
     [Header("Pathfinding")]
     public Transform target;
     public LayerMask playerLayer;
-    public float activeDistance;
     public float pathUpdateSeconds = 0.5f;
+    float activeDistance;
     Collider2D closestTarget;
 
     [Header("Physics")]
@@ -39,7 +38,8 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        moveSpeed = (controller.moveSpeed * 20);
+        //move Speed * 50 ¿eby prêdkoœci by³y w tej samej skali co gracza.
+        moveSpeed = (controller.moveSpeed * 50);
     }
 
     private void FixedUpdate()
@@ -61,7 +61,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (TargetInDistance() && seeker.IsDone())
         {
-            seeker.StartPath(rb.position, target.position, OnPathComplete);
+            seeker.StartPath(transform.position, closestTarget.transform.position, OnPathComplete);
         }
     }
 
@@ -77,10 +77,32 @@ public class EnemyAI : MonoBehaviour
         {
             return;
         }
+
         //Animation
         if (controller.currentEnemyState != EnemyController.enemyState.Chase)
         {
             controller.ChangeEnemyState(EnemyController.enemyState.Chase);
+        }
+
+        float distanceToWaypoint;
+        while (true)
+        {
+            distanceToWaypoint = Vector2.Distance(transform.position, path.vectorPath[currentWaypoint]);
+            if (distanceToWaypoint < nextWaypointDistance)
+            {
+                if (currentWaypoint + 1 < path.vectorPath.Count)
+                {
+                    currentWaypoint++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                break;
+            }
         }
 
         //Move
@@ -89,13 +111,8 @@ public class EnemyAI : MonoBehaviour
 
         rb.linearVelocity = new Vector2(force.x, force.y);
 
-        float distance = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
-        if (distance < nextWaypointDistance)
-        {
-            currentWaypoint++;
-        }
         //GFX Flip
-        if (direction.x >= 0.05f)
+            if (direction.x >= 0.05f)
         {
             enemyGFX.flipX = false;
         }
@@ -108,7 +125,7 @@ public class EnemyAI : MonoBehaviour
     bool TargetInDistance()
     {
         Collider2D[] closeTargets = Physics2D.OverlapCircleAll(rb.position, activeDistance, playerLayer);
-        Collider2D closestTarget = null;
+        closestTarget = null;
         float shortestDistance = Mathf.Infinity;
 
         foreach (Collider2D target in closeTargets)
@@ -134,7 +151,7 @@ public class EnemyAI : MonoBehaviour
         if (!p.error)
         {
             path = p;
-            currentWaypoint = 1;
+            currentWaypoint = 0;
         }
     }
 
