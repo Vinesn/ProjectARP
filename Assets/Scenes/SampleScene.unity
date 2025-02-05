@@ -615,11 +615,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 270788259184207235, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 270788259184207235, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 709548910614151961, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_Layer
@@ -655,7 +655,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6174160742709071252, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8207605183673053496, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_Layer
@@ -663,11 +663,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8272602986213543305, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8272602986213543305, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8398143048549052946, guid: d3b3fa8c3dcc810458836d7009b83287, type: 3}
       propertyPath: m_Layer
@@ -2271,8 +2271,16 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3337775143703945165, guid: 6f453db67db00e146a6f0efdb308ca1d, type: 3}
+      propertyPath: patrolSpeedNerf
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3337775143703945165, guid: 6f453db67db00e146a6f0efdb308ca1d, type: 3}
       propertyPath: pathUpdateSeconds
       value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5274779078648158070, guid: 6f453db67db00e146a6f0efdb308ca1d, type: 3}
+      propertyPath: sightRadius
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6640329762623084662, guid: 6f453db67db00e146a6f0efdb308ca1d, type: 3}
       propertyPath: m_AnchorMax.x

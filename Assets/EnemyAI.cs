@@ -4,13 +4,21 @@ using Pathfinding;
 
 public class EnemyAI : MonoBehaviour
 {
-    //Zrobic Mechanike Patrolu (WaitforNextPatrol, RandomPatrolPoint), Ogarnac State Machine
+    //Zrobic Raycast zeby przeciwnik nie updatowal patha przy sciganiu gracza za przeszkodami, Nie tworzyc drogi do miejsc niedostępnych
     [Header("Pathfinding")]
     public Transform target;
     public LayerMask playerLayer;
     public float pathUpdateSeconds = 0.5f;
     float activeDistance;
     Collider2D closestTarget;
+    bool reachedEndOfPath = true;
+
+    [Header("Patrol")]
+    [SerializeField] float patrolRadius = 5f;
+    [Range(0f, 1f)][SerializeField] float patrolSpeedNerf = 0.7f;
+    [SerializeField] float patrolCooldown = 3f;
+    [SerializeField] float patrolTimer;
+    bool hasPatrolPoint = false;
 
     [Header("Physics")]
     public float nextWaypointDistance = 3f;
@@ -33,34 +41,69 @@ public class EnemyAI : MonoBehaviour
     private void Start()
     {
         activeDistance = controller.sightRadius;
+        patrolTimer = patrolCooldown;
         InvokeRepeating("UpdatePath", 0f, pathUpdateSeconds);
     }
 
     private void Update()
     {
-        //move Speed * 50 zeby predkosci byly w tej samej skali co gracza.
-        moveSpeed = (controller.moveSpeed * 50);
+        Debug.Log(moveSpeed);
+        //Move Speed
+        if (controller.currentEnemyState == EnemyController.enemyState.Patrol)
+        {
+            moveSpeed = ((controller.moveSpeed * 50) * patrolSpeedNerf);
+        } else
+        {
+            moveSpeed = (controller.moveSpeed * 50);
+        }
 
+        //Update zasięg ścigania
         if (activeDistance != controller.sightRadius)
         {
             activeDistance = controller.sightRadius;
         }
+
+        if (patrolTimer > 0 && controller.currentEnemyState == EnemyController.enemyState.Idle)
+        {
+            patrolTimer -= Time.deltaTime;
+        }
+        
     }
 
     private void FixedUpdate()
     {
         if (TargetInDistance())
         {
+            //Animation
+            if (controller.currentEnemyState != EnemyController.enemyState.Chase)
+            {
+                controller.ChangeEnemyState(EnemyController.enemyState.Chase);
+            }
+
             PathFollow();
         }
-        else
+
+        if (!reachedEndOfPath)
         {
-            controller.ChangeEnemyState(EnemyController.enemyState.Idle);
-            rb.linearVelocity = Vector2.zero;
-            rb.angularVelocity = 0f;
+            PathFollow();
+        } else
+        {
+            if (controller.currentEnemyState != EnemyController.enemyState.Idle)
+            {
+                controller.ChangeEnemyState(EnemyController.enemyState.Idle);
+                rb.linearVelocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+
+                hasPatrolPoint = false;
+                patrolTimer = patrolCooldown;
+            }
         }
 
-
+        if (patrolTimer <= 0 && controller.currentEnemyState == EnemyController.enemyState.Idle)
+        {
+            controller.ChangeEnemyState(EnemyController.enemyState.Patrol);
+            PathFollow();
+        }
     }
 
     void UpdatePath()
@@ -68,6 +111,11 @@ public class EnemyAI : MonoBehaviour
         if (TargetInDistance() && seeker.IsDone())
         {
             seeker.StartPath(transform.position, closestTarget.transform.position, OnPathComplete);
+        }
+
+        if (!hasPatrolPoint && !TargetInDistance() && seeker.IsDone())
+        {
+            seeker.StartPath(transform.position, PickRandomPoint(), OnPathComplete);
         }
     }
 
@@ -84,11 +132,7 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        //Animation
-        if (controller.currentEnemyState != EnemyController.enemyState.Chase)
-        {
-            controller.ChangeEnemyState(EnemyController.enemyState.Chase);
-        }
+        reachedEndOfPath = false;
 
         float distanceToWaypoint;
         while (true)
@@ -102,6 +146,7 @@ public class EnemyAI : MonoBehaviour
                 }
                 else
                 {
+                    reachedEndOfPath = true;
                     break;
                 }
             }
@@ -159,6 +204,14 @@ public class EnemyAI : MonoBehaviour
             path = p;
             currentWaypoint = 0;
         }
+    }
+    Vector2 PickRandomPoint()
+    {
+        var point = Random.insideUnitSphere * patrolRadius;
+        point += transform.position;
+
+        hasPatrolPoint = true;
+        return point;
     }
 
     private void OnDrawGizmos()
