@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class EnemyController : MonoBehaviour
 {
     [Header("State")]
-    [SerializeField] public enemyState currentEnemyState;
+    [SerializeField] public enemyState currentEnemyState = enemyState.Idle;
 
     [Header("Stats")]
     public float maxHealth = 100;

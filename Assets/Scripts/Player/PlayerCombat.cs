@@ -32,8 +32,6 @@ public class PlayerCombat : MonoBehaviour
         {
             attackCooldownTimer -= Time.deltaTime;
         }
-
-
     }
 
     public void Attack(InputAction.CallbackContext context)

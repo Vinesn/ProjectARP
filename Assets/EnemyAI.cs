@@ -1,10 +1,10 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using Pathfinding;
 
 public class EnemyAI : MonoBehaviour
 {
-    //Zrobiæ Mechanike Patrolu (WaitforNextPatrol, RandomPatrolPoint), Ogarn¹æ State Machine
+    //Zrobic Mechanike Patrolu (WaitforNextPatrol, RandomPatrolPoint), Ogarnac State Machine
     [Header("Pathfinding")]
     public Transform target;
     public LayerMask playerLayer;
@@ -38,8 +38,13 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        //move Speed * 50 ¿eby prêdkoœci by³y w tej samej skali co gracza.
+        //move Speed * 50 zeby predkosci byly w tej samej skali co gracza.
         moveSpeed = (controller.moveSpeed * 50);
+
+        if (activeDistance != controller.sightRadius)
+        {
+            activeDistance = controller.sightRadius;
+        }
     }
 
     private void FixedUpdate()
@@ -47,7 +52,8 @@ public class EnemyAI : MonoBehaviour
         if (TargetInDistance())
         {
             PathFollow();
-        } else
+        }
+        else
         {
             controller.ChangeEnemyState(EnemyController.enemyState.Idle);
             rb.linearVelocity = Vector2.zero;
@@ -112,7 +118,7 @@ public class EnemyAI : MonoBehaviour
         rb.linearVelocity = new Vector2(force.x, force.y);
 
         //GFX Flip
-            if (direction.x >= 0.05f)
+        if (direction.x >= 0.05f)
         {
             enemyGFX.flipX = false;
         }
