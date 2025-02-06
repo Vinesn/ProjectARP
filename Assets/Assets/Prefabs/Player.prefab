@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5984442499955610910}
   - component: {fileID: 6972963954878792}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PlayerAttackHitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4507063073328552158}
   - component: {fileID: 1413960858338323517}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PlayerSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -184,9 +184,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7730786317137064546}
   - component: {fileID: 5592897677970195160}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PlayerHitbox
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -266,7 +266,7 @@ GameObject:
   - component: {fileID: 5987560430440547344}
   - component: {fileID: 5798653324937108894}
   - component: {fileID: 1134410603093355583}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -473,7 +473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6adfe0ef1c667bc4eb44a8449c4e57f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 5
+  movementSpeed: 4
   moveInput: {x: 0, y: 0}
   attPos: {fileID: 0}
 --- !u!114 &1134410603093355583

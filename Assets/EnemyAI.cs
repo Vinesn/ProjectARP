@@ -4,14 +4,19 @@ using Pathfinding;
 
 public class EnemyAI : MonoBehaviour
 {
-    //Zrobic Raycast zeby przeciwnik nie updatowal patha przy sciganiu gracza za przeszkodami, Nie tworzyc drogi do miejsc niedostępnych
+    //Attack, Hurt
     [Header("Pathfinding")]
     public Transform target;
     public LayerMask playerLayer;
+    public LayerMask obstacleLayer;
     public float pathUpdateSeconds = 0.5f;
-    float activeDistance;
     Collider2D closestTarget;
+    GraphNode positionNode;
+    GraphNode destinationNode;
     bool reachedEndOfPath = true;
+
+    [Header("Chase")]
+    public float sightRadius = 5f;
 
     [Header("Patrol")]
     [SerializeField] float patrolRadius = 5f;
@@ -40,14 +45,12 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
-        activeDistance = controller.sightRadius;
         patrolTimer = patrolCooldown;
         InvokeRepeating("UpdatePath", 0f, pathUpdateSeconds);
     }
 
     private void Update()
     {
-        Debug.Log(moveSpeed);
         //Move Speed
         if (controller.currentEnemyState == EnemyController.enemyState.Patrol)
         {
@@ -55,12 +58,6 @@ public class EnemyAI : MonoBehaviour
         } else
         {
             moveSpeed = (controller.moveSpeed * 50);
-        }
-
-        //Update zasięg ścigania
-        if (activeDistance != controller.sightRadius)
-        {
-            activeDistance = controller.sightRadius;
         }
 
         if (patrolTimer > 0 && controller.currentEnemyState == EnemyController.enemyState.Idle)
@@ -72,7 +69,7 @@ public class EnemyAI : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (TargetInDistance())
+        if (TargetClose() && TargetVisible())
         {
             //Animation
             if (controller.currentEnemyState != EnemyController.enemyState.Chase)
@@ -108,14 +105,22 @@ public class EnemyAI : MonoBehaviour
 
     void UpdatePath()
     {
-        if (TargetInDistance() && seeker.IsDone())
+        if (TargetClose() && TargetVisible() && seeker.IsDone())
         {
             seeker.StartPath(transform.position, closestTarget.transform.position, OnPathComplete);
         }
 
-        if (!hasPatrolPoint && !TargetInDistance() && seeker.IsDone())
+        if (!hasPatrolPoint && controller.currentEnemyState != EnemyController.enemyState.Chase && seeker.IsDone())
         {
-            seeker.StartPath(transform.position, PickRandomPoint(), OnPathComplete);
+            while (true)
+            {
+                seeker.StartPath(transform.position, PickRandomPoint(), OnPathComplete);
+
+                if (IsPathPossible(positionNode, destinationNode))
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -173,9 +178,9 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    bool TargetInDistance()
+    bool TargetClose()
     {
-        Collider2D[] closeTargets = Physics2D.OverlapCircleAll(rb.position, activeDistance, playerLayer);
+        Collider2D[] closeTargets = Physics2D.OverlapCircleAll(rb.position, sightRadius, playerLayer);
         closestTarget = null;
         float shortestDistance = Mathf.Infinity;
 
@@ -189,10 +194,26 @@ public class EnemyAI : MonoBehaviour
                 closestTarget = target;
             }
         }
-
         if (closestTarget != null)
         {
             return true;
+        }
+        return false;
+    }
+
+    bool TargetVisible()
+    {
+        if (closestTarget != null)
+        {
+            Vector2 directionToTarget = (closestTarget.transform.position - transform.position).normalized;
+
+            RaycastHit2D ray = Physics2D.Raycast(transform.position, directionToTarget, sightRadius);
+            if (ray.collider != null && ray.collider.CompareTag("Player"))
+            {
+                Debug.DrawRay(transform.position, directionToTarget * sightRadius, Color.green);
+                return true;
+            }
+            Debug.DrawRay(transform.position, directionToTarget * sightRadius, Color.red);
         }
         return false;
     }
@@ -210,13 +231,28 @@ public class EnemyAI : MonoBehaviour
         var point = Random.insideUnitSphere * patrolRadius;
         point += transform.position;
 
+        positionNode = AstarPath.active.GetNearest(transform.position).node;
+        destinationNode = AstarPath.active.GetNearest(point).node;
+
         hasPatrolPoint = true;
         return point;
+    }
+
+    bool IsPathPossible(GraphNode node1, GraphNode node2)
+    {
+        return PathUtilities.IsPathPossible(node1, node2);
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, activeDistance);
+        Gizmos.DrawWireSphere(transform.position, sightRadius);
+
+        if (positionNode != null && destinationNode != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawCube((Vector3)positionNode.position, Vector3.one);
+            Gizmos.DrawCube((Vector3)destinationNode.position, Vector3.one);
+        }
     }
 }

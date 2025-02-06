@@ -10,7 +10,6 @@ public class EnemyController : MonoBehaviour
     [Header("Stats")]
     public float maxHealth = 100;
     public float moveSpeed = 2f;
-    public float sightRadius = 5f;
     public float currentHealth;
 
     SpriteRenderer spriteController;
